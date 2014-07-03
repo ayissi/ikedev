@@ -1,6 +1,5 @@
 package com.diakiese.pricer.o1bean;
 			
-import org.joda.time.DateTime;
 
 
 /**
@@ -11,13 +10,6 @@ public class Echeance implements Comparable<Echeance>{
 	
 	private Long echeanceId;
 	private String codeObligation;  
-
-	
-	/**
-	 * date à laquelle cette échéance doit être échue.
-	 * ressemble à une date de prélèvement automatique
-	 * */
-	private DateTime date ;
 			
 	/**
 	 * son rang dans l'ordre des remboursement
@@ -42,13 +34,7 @@ public class Echeance implements Comparable<Echeance>{
 		this.echeanceId = echeanceId;
 	}
 
-	public DateTime getDate() {
-		return date;
-	}
 
-	public void setDate(DateTime date) {
-		this.date = date;
-	}
 
 	public Short getRank() {
 		return rank;
