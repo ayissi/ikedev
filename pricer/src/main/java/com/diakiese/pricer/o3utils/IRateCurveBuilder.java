@@ -6,5 +6,5 @@ import java.io.IOException;
 
 public interface IRateCurveBuilder {
 
-	RateCurveWrapper createRateCurve(String filePath) throws IOException; 
+	RateCurveWrapper createRateCurve2() throws IOException; 
 }
