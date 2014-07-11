@@ -17,7 +17,7 @@ public class Test {
 		Bond bond = builder.withPeriodicity(6)											         
 				.withEmissionDate(new DateTime(2011,1,1,0,0,0))
 				.withMaturity(2)
-				.withCouponAmount(new Double(1.5))
+				.withTauxFacial(0.05)
 				.withNominalAmount(new Double(100))
 				.build();
 		

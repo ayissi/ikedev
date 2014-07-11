@@ -10,7 +10,7 @@ import com.diakiese.pricer.o3utils.BondPricerUtils;
 
 
 /**
- * Classe modélisant une obligation
+ * Classe modélisant une obligation à taux fixe
  * @author guy.belomo
  *
  */
@@ -36,11 +36,14 @@ public class Bond {
 	 * */
 	private Double nominalAmount;
 	
+
 	/**
-	 * le montant de coupon
+	 * le taux facial
 	 * */
-	private Double  coupondAmount;
+	private Double tauxFacial;
 	
+	private Double coupon ;
+		
 	public Integer getPeriodicity() {
 		return periodicity;
 	}
@@ -65,13 +68,19 @@ public class Bond {
 	public void setNominalAmount(Double nominalAmount) {
 		this.nominalAmount = nominalAmount;
 	}
-	public Double getCoupondAmount() {
-		return coupondAmount;
-	}
-	public void setCoupondAmount(Double coupondAmount) {
-		this.coupondAmount = coupondAmount;
-	}
 
+
+	public Double getTauxFacial() {
+		return tauxFacial;
+	}
+	public void setTauxFacial(Double tauxFacial) {
+		this.tauxFacial = tauxFacial;
+	}
+	
+	
+	public Double getCoupon() {
+		return coupon;
+	}
 
 	public String toString(){
 	
@@ -89,25 +98,32 @@ public class Bond {
 		return s; 
 	}
 	
-	public Bond(){
-		
-	}
+	public Bond(){}
+	
 	private Bond(BondBuilder builder){
 		this.bondMaturity = builder.bondMaturity;
 		this.periodicity = builder.periodicity ;
 		this.emissionDate = builder.emissionDate ;
 		this.nominalAmount = builder.nominalAmount ;
-		this.coupondAmount = builder.coupondAmount;
+		this.tauxFacial = builder.tauxFacial;
+		this.coupon = builder.coupon;
 	}
 	
-	public class BondBuilder {
+
 	
+	public class BondBuilder {
 		private Integer periodicity ;
 		private Integer bondMaturity;
 		private DateTime emissionDate;
 		private Double nominalAmount;
-		private Double  coupondAmount;
-				
+		private Double  tauxFacial;
+		private Double coupon ;
+		
+		private void initValeurCoupon(){
+			Double periodicityInYear = new Double(this.periodicity)/12.0 ;
+			this.coupon = this.tauxFacial*periodicityInYear*this.nominalAmount;
+		}		
+		
 		public BondBuilder withPeriodicity(Integer periodicity){
 			this.periodicity = periodicity ;
 			return this ;
@@ -128,12 +144,13 @@ public class Bond {
 			return this;
 		}
 		
-		public BondBuilder withCouponAmount(Double coupon){
-			this.coupondAmount = coupon ;
+		public BondBuilder withTauxFacial(Double taux){
+			this.tauxFacial = taux ;
 			return this ;
 		}
 		
 		public Bond build(){
+			initValeurCoupon();
 			return new Bond(this);
 		}
 	};

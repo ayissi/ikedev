@@ -49,7 +49,7 @@ public class RateCurveBuilderImpl implements IRateCurveBuilder {
 //				log.info("\n");		  
 				i++;
 			}		
-			rateCurveWrapper.setRateCurveDateTimed(rateCurve);
+			rateCurveWrapper.setRateCoordinatesByDate(rateCurve);
 		}catch(Exception e){
 			e.printStackTrace();		
 		}finally{

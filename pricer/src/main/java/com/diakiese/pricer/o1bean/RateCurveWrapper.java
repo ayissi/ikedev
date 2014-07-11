@@ -11,10 +11,10 @@ public class RateCurveWrapper {
 	Map<DateTime,List<RateCoordinate>> rateCoordinatesByDate ;
 
 		
-	public Map<DateTime, List<RateCoordinate>> getRateCurveDateTimed() {
+	public Map<DateTime, List<RateCoordinate>> getRateCoordinatesByDate() {
 		return rateCoordinatesByDate;
 	}
-	public void setRateCurveDateTimed(
+	public void setRateCoordinatesByDate(
 			Map<DateTime, List<RateCoordinate>> rateCurveDateTimed) {
 		this.rateCoordinatesByDate = rateCurveDateTimed;
 	}
