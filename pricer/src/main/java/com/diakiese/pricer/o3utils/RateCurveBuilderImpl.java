@@ -6,8 +6,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-
+			
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 
@@ -15,6 +14,8 @@ import au.com.bytecode.opencsv.CSVReader;
 
 import com.diakiese.pricer.o1bean.RateCoordinate;
 import com.diakiese.pricer.o1bean.RateCurveEntry;
+import com.diakiese.pricer.o1bean.RateCurveWrapper;
+
 
 public class RateCurveBuilderImpl implements IRateCurveBuilder {
 
@@ -80,7 +81,7 @@ public class RateCurveBuilderImpl implements IRateCurveBuilder {
 //	}
 
 
-	public  RateCurveWrapper createRateCurve2() throws IOException {												 
+	public  com.diakiese.pricer.o1bean.RateCurveWrapper createRateCurve2() throws IOException {												 
 		RateCurveWrapper rateCurveWrapper = new RateCurveWrapper();							
 //		Map<DateTime,List<Double>> rateCurve = new LinkedHashMap<DateTime,List<Double>>();  
 		Map<String,List<RateCoordinate>> rateCurve = new LinkedHashMap<String,List<RateCoordinate>>();
@@ -99,7 +100,7 @@ public class RateCurveBuilderImpl implements IRateCurveBuilder {
 			for(String[] data:datas){
 				rateCurveEntry = buildRateEntry(data,periodZones);		
 				rateCurveEntry.initDate();
-				rateCurve.put(rateCurveEntry.getKey(), rateCurveEntry.getRateCoordinates());
+//				rateCurve.put(rateCurveEntry.getKey(), rateCurveEntry.getRateCoordinates());
 				rateCurve2.put(rateCurveEntry.getDate(), rateCurveEntry.getRateCoordinates());
 //				log.info("ENTRY: " + i +"\n");														  
 //				for(int j=0;j<rateCurveEntry.getRateCoordinates().size();j++){
@@ -109,8 +110,7 @@ public class RateCurveBuilderImpl implements IRateCurveBuilder {
 //				log.info("\n");  
 				i++;
 			}		
-			rateCurveWrapper.setRateCurveDateTimed(rateCurve2);
-			rateCurveWrapper.setRateCurveString(rateCurve);    
+			rateCurveWrapper.setRateCoordinatesByDate(rateCurve2);    
 		}catch(Exception e){
 			e.printStackTrace();		
 		}finally{
@@ -120,8 +120,6 @@ public class RateCurveBuilderImpl implements IRateCurveBuilder {
 	}
 	
 
-
-	
 	public RateCurveEntry buildRateEntry(String[] tabKeys,String[] tabPeriodZones){
 		RateCurveEntry rateCurveEntry = new RateCurveEntry();								 
 		rateCurveEntry.setKey(tabKeys[0]);				
@@ -148,7 +146,7 @@ public class RateCurveBuilderImpl implements IRateCurveBuilder {
 		RateCurveBuilderImpl builder = new RateCurveBuilderImpl();  
 		RateCurveWrapper rateCurveWrapper = builder.createRateCurve2();  
 //		Set<String> dates = rateCurveWrapper.getRateCurve().keySet(); 
-		int i = 1; 																			
+		int i = 1;	 																			
 //		for(String s:dates){		 
 //			log.info("\t\tDate "+ i + ": " + s + "\tTAUX_1: " + rateCurveWrapper.getRateCurve().get(s).get(0)+ "\tTAUX_2: " + rateCurveWrapper.getRateCurve().get(s).get(1));  
 //			i++ ;

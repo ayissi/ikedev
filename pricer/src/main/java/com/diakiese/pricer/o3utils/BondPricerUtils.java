@@ -19,7 +19,7 @@ import com.diakiese.pricer.o1bean.RateCoordinate;
                                                 
 public class BondPricerUtils {
 		
-	final static Logger log = Logger.getLogger(BondPricerUtils.class);
+//	final static Logger log = Logger.getLogger(BondPricerUtils.class);
 	/**
 	 * retourne l'ensemble des dates des coupons associés à une Obligation 
 	 * @param bondPeriodicity la periodicite de l'obligation (en mois)
@@ -84,7 +84,7 @@ public class BondPricerUtils {
 		int interval = Days.daysBetween(pricingDate, paymentDate).getDays();	
 		Double d = new Double(interval);
 		Double ratioDuration = d/360 ; 
-		log.info("Pricing Date : " + pricingDate.toString() +"\tPayment Date: " +paymentDate+ "\t ==> ecart:" + interval +"\t ==> ratioDuration: " + ratioDuration); 
+//		log.info("Pricing Date : " + pricingDate.toString() +"\tPayment Date: " +paymentDate+ "\t ==> ecart:" + interval +"\t ==> ratioDuration: " + ratioDuration); 
 		return ratioDuration ;		
 	}
 	
@@ -131,6 +131,35 @@ public class BondPricerUtils {
 		return fluxByBillingDate; 
 	}
 
+	/**
+	 * retourne l'ensemble des dates des flux futurs associés à une Obligation relativement à la date de pricing
+	 * @param bondPeriodicity la periodicite de l'obligation (en mois)
+	 * @param bondMaturity la maturité de l'obligation (en années)
+	 * @param bondEmissionDate la date d'emission de l'obligation
+	 * @param pricingDate la date de pricing 
+	 * */	
+	/*				
+	public static List<DateTime> getFuturesBillingDates(int bondPeriodicity,int bondMaturity,DateTime bondEmissionDate,DateTime pricingDate){
+		Set<DateTime> billingDates = getBillingDates(bondPeriodicity, bondMaturity, bondEmissionDate);
+		List<DateTime> futuresBillingDates = new LinkedList<DateTime>();
+		for(DateTime date:billingDates){
+			if(date.compareTo(pricingDate)>=0){
+				futuresBillingDates.add(date);
+			}
+		}		
+		return futuresBillingDates ;
+	}*/
+		
+
+	/**
+	 * retourne le nombre de flux restant de l'obligation, relativement à la date de pricing
+	 * @param bond l'obligation
+	 * @param pricingDate la date de pricing						    
+	 * */
+	public static int getNombreDeFluxRestant(Bond bond, DateTime pricingDate){
+		return getFuturesBillingDates(bond.getPeriodicity(), bond.getBondMaturity(),bond.getEmissionDate(), pricingDate).size();
+		
+	}
 					
 	/**
 	 * retourne le taux interpolé d'un RateCoordinate X 
@@ -141,7 +170,7 @@ public class BondPricerUtils {
 	public static Double linearInterpolation(RateCoordinate floorElt, RateCoordinate ceilElt, Double midPeriodYear){
 		Double d = new Double(0.0);		
 		if(!ceilElt.getPeriodYear().equals(floorElt.getPeriodYear())&&(floorElt!=null)&&(ceilElt!=null)&&(floorElt.getRate()!=null)&&(ceilElt.getRate()!=null)){
-			log.info("FLOOR PERIOD YEAR: " +floorElt.getPeriodYear()+ "\tCEIL PERIOD YEAR: " + ceilElt.getPeriodYear() +"\tMID PERIOD YEAR: " + midPeriodYear +"\tFLOOR RATE" + floorElt.getRate() + "\tCEIL RATE " + ceilElt.getRate());
+//			log.info("FLOOR PERIOD YEAR: " +floorElt.getPeriodYear()+ "\tCEIL PERIOD YEAR: " + ceilElt.getPeriodYear() +"\tMID PERIOD YEAR: " + midPeriodYear +"\tFLOOR RATE" + floorElt.getRate() + "\tCEIL RATE " + ceilElt.getRate());
 			Double quotient = ceilElt.getPeriodYear()-floorElt.getPeriodYear();  
 			Double d1 = ((ceilElt.getPeriodYear()-midPeriodYear)/(quotient))*floorElt.getRate();
 			Double d2 = ((midPeriodYear-floorElt.getPeriodYear())/(quotient))*ceilElt.getRate();	
@@ -150,7 +179,7 @@ public class BondPricerUtils {
 		return d; 
 	}
 
-
+		
 	/**
 	 * retourne le RateCoordinate X tel que X.periodYear précède _periodYear
 	 * @param rateCoordinates la liste des (année,taux)
@@ -158,13 +187,14 @@ public class BondPricerUtils {
 	 * */										
 	public static RateCoordinate getFloorRateCoordinate(List<RateCoordinate> rateCoordinates, Double _periodYear){
 		RateCoordinate rateCoordinate = new RateCoordinate();
-		Double periodYearCent = _periodYear * 100.0;
+		Double periodYearCent = _periodYear * 100.0;							
 		Integer _period = periodYearCent.intValue();
-		Integer position = _period/25;
-		if((rateCoordinates==null)||(position==0)){
+		Integer position = _period/25;														
+//		log.info("\tTaille: " + rateCoordinates.size()  +"\tPosition: " + position );
+		if((rateCoordinates==null)||(position==0)||(position> rateCoordinates.size()-1)){
 			rateCoordinate.setRate(0.0);
 			rateCoordinate.setPeriodYear(_periodYear); 
-		}else{
+		}else{															
 			rateCoordinate = rateCoordinates.get(position-1) ;
 		}
 		return rateCoordinate ; 
@@ -181,7 +211,7 @@ public class BondPricerUtils {
 		Double periodYearCent = _periodYear * 100.0;
 		Integer _period = periodYearCent.intValue();
 		Integer position = _period/25;
-		if(rateCoordinates==null){ 
+		if((rateCoordinates==null)||(position==0)||(position> rateCoordinates.size()-1)){ 
 			rateCoordinate.setRate(0.0);
 			rateCoordinate.setPeriodYear(_periodYear);
 		}else{  
@@ -294,7 +324,8 @@ public class BondPricerUtils {
    
    	/**
    	 * retourne la valeur "alpha" de l'algo de pricing 
-   	 * 
+   	 * @param bond l'obligation
+   	 * @param pricingDate la date de pricing 
    	 * */
    public static Double getRatioAlpha(Bond bond, DateTime pricingDate){
 	  DateTime dateProchainCoupon = getDateProchainCoupon(pricingDate,bond);
@@ -320,7 +351,8 @@ public class BondPricerUtils {
 		double denominateur = Math.pow(1+rate, puissance); 
 		return (coupon+nominal)/denominateur;
 	}
-   /**
+ 
+	/**
     * retourne la date du prochain coupon associée à <b>bond</b> par rappord a
     * la date de pricing <b>pricingDate</d> 
     * */

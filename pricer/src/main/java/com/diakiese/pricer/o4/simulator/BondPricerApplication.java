@@ -5,12 +5,13 @@ import java.util.List;
 import java.util.Map;
 
 import javafx.application.Application;
-import javafx.scene.Scene;
+import javafx.scene.Scene;  
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.stage.Stage;
+			
 
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
@@ -68,7 +69,7 @@ public class BondPricerApplication extends Application {
 
         for(DateTime pricingDate=dateDebut ; dateFin.compareTo(pricingDate)>0 ; pricingDate=pricingDate.plusDays(1)){
         	xDate = BondPricerUtils.getDateStringFormat(pricingDate);
-        	yBondPrice = bondPricer.price(bond, pricingDate, rateCoordinatesByDate); 
+        	yBondPrice = bondPricer.price2(bond, pricingDate, rateCoordinatesByDate);								 
         	series1.getData().add(new XYChart.Data(xDate, yBondPrice));
         }
         

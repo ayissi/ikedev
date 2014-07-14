@@ -17,7 +17,6 @@ import com.diakiese.pricer.o3utils.BondPricerUtils;
 
 public class BondPricerImpl  {
 						
-
 	final static Logger log = Logger.getLogger(BondPricerImpl.class);
 			
 //	public Double getBondPrice(Bond bond, DateTime pricingDate, Map<DateTime, List<RateCoordinate>> rateCoordinatesByDate){
@@ -54,7 +53,8 @@ public class BondPricerImpl  {
 
 	}
 	
-		
+	
+
 	/**
 	 * retourne le prix de l'obligation b, à la date pricingDate
 	 * */
@@ -70,19 +70,16 @@ public class BondPricerImpl  {
 		}else {
 			periodRestant = daysRestant/360.0f;
 		}
-		double period = bond.getPeriodicity()/12.0;
-		
+		double period = bond.getPeriodicity()/12.0;	
 		Double coupon = bond.getCoupon(); 
-			
 		Double ratioAlpha = BondPricerUtils.getRatioAlpha(bond, pricingDate);
-
 	    int nb = 0;
 		double price = 0;
 		double difference = (ratioAlpha + nb*period) - periodRestant;
 		double rateInterpolated =0.0;
 		RateCoordinate ceilRateCoordinate ;  
 		RateCoordinate floorRateCoordinate;
-		while(difference < -0.01) { 
+		while(difference < -0.01){ 
 			floorRateCoordinate = BondPricerUtils.getFloorRateCoordinate(rateCoordinates,ratioAlpha + nb*period); 
 			ceilRateCoordinate = BondPricerUtils.getCeilRateCoordinate(rateCoordinates, ratioAlpha + nb*period);
 			rateInterpolated = BondPricerUtils.linearInterpolation(floorRateCoordinate, ceilRateCoordinate, ratioAlpha);
@@ -97,6 +94,36 @@ public class BondPricerImpl  {
 		log.info("X: "+ pricingDate +"Y: " +price);
 	 return price;
 	}
-
+	
+	/**
+	 * retourne le prix de l'obligation b, à la date pricingDate
+	 * */
+	public Double price2(Bond bond, DateTime pricingDate,Map<DateTime,List<RateCoordinate>> rateCoordinatesByDate){	
+		 List<RateCoordinate> rateCoordinates = BondPricerUtils.getAccurateRateCoordinates(rateCoordinatesByDate,pricingDate);      	
+  
+		Double coupon = bond.getCoupon(); 
+		Double ratioAlpha = BondPricerUtils.getRatioAlpha(bond, pricingDate);
+		double price = 0;
+		int incrementDeFlux = 0;
+		int nbreDeFluxRestant = BondPricerUtils.getNombreDeFluxRestant(bond, pricingDate);
+		double rateInterpolated =0.0;
+		RateCoordinate ceilRateCoordinate ;  
+		RateCoordinate floorRateCoordinate;
+		while(incrementDeFlux < nbreDeFluxRestant -1){ 
+			ratioAlpha = ratioAlpha + incrementDeFlux;
+			floorRateCoordinate = BondPricerUtils.getFloorRateCoordinate(rateCoordinates,ratioAlpha); 
+			ceilRateCoordinate = BondPricerUtils.getCeilRateCoordinate(rateCoordinates,ratioAlpha);
+			rateInterpolated = BondPricerUtils.linearInterpolation(floorRateCoordinate, ceilRateCoordinate, ratioAlpha);
+			price += BondPricerUtils.getFlux(coupon, rateInterpolated, ratioAlpha); 
+			incrementDeFlux++;
+		}
+		ratioAlpha = ratioAlpha + incrementDeFlux;								
+		floorRateCoordinate = BondPricerUtils.getFloorRateCoordinate(rateCoordinates,ratioAlpha); 
+		ceilRateCoordinate  = BondPricerUtils.getCeilRateCoordinate(rateCoordinates,ratioAlpha);
+		rateInterpolated = BondPricerUtils.linearInterpolation(floorRateCoordinate, ceilRateCoordinate, ratioAlpha); 
+		price = price + BondPricerUtils.getLastFlux(coupon, bond.getNominalAmount(),rateInterpolated,ratioAlpha);
+//		log.info("X: "+ pricingDate +"Y: " +price);  
+	 return price;
+	}
 
 }
