@@ -2,7 +2,6 @@
  * 
  */
 package com.diakiese.pricer.o1bean;
-
 import org.joda.time.DateTime;
 
 import com.diakiese.pricer.o3utils.BondPricerUtils;
@@ -11,8 +10,7 @@ import com.diakiese.pricer.o3utils.BondPricerUtils;
 
 /**
  * Classe modélisant une obligation à taux fixe
- * @author guy.belomo
- *
+ * @author guy.belomo  
  */
 public class Bond {
 	
@@ -27,7 +25,7 @@ public class Bond {
 	private Integer bondMaturity;
 	
 	/**
-	 * 
+	 * date d'emission 
 	 * */
 	private DateTime emissionDate;
 	
@@ -35,15 +33,8 @@ public class Bond {
 	 * le montant nominal
 	 * */
 	private Double nominalAmount;
-	
 
-	/**
-	 * le taux facial
-	 * */
-	private Double tauxFacial;
 	
-	private Double coupon ;
-		
 	public Integer getPeriodicity() {
 		return periodicity;
 	}
@@ -70,17 +61,6 @@ public class Bond {
 	}
 
 
-	public Double getTauxFacial() {
-		return tauxFacial;
-	}
-	public void setTauxFacial(Double tauxFacial) {
-		this.tauxFacial = tauxFacial;
-	}
-	
-	
-	public Double getCoupon() {
-		return coupon;
-	}
 
 	public String toString(){
 	
@@ -100,13 +80,12 @@ public class Bond {
 	
 	public Bond(){}
 	
+		
 	private Bond(BondBuilder builder){
 		this.bondMaturity = builder.bondMaturity;
 		this.periodicity = builder.periodicity ;
 		this.emissionDate = builder.emissionDate ;
 		this.nominalAmount = builder.nominalAmount ;
-		this.tauxFacial = builder.tauxFacial;
-		this.coupon = builder.coupon;
 	}
 	
 
@@ -116,13 +95,6 @@ public class Bond {
 		private Integer bondMaturity;
 		private DateTime emissionDate;
 		private Double nominalAmount;
-		private Double  tauxFacial;
-		private Double coupon ;
-		
-		private void initValeurCoupon(){
-			Double periodicityInYear = new Double(this.periodicity)/12.0 ;
-			this.coupon = this.tauxFacial*periodicityInYear*this.nominalAmount;
-		}		
 		
 		public BondBuilder withPeriodicity(Integer periodicity){
 			this.periodicity = periodicity ;
@@ -138,19 +110,14 @@ public class Bond {
 			this.emissionDate = emissionDate ;
 			return this;
 		}
-		
+
 		public BondBuilder withNominalAmount(Double nominal){
 			this.nominalAmount = nominal ;
 			return this;
 		}
 		
-		public BondBuilder withTauxFacial(Double taux){
-			this.tauxFacial = taux ;
-			return this ;
-		}
-		
+
 		public Bond build(){
-			initValeurCoupon();
 			return new Bond(this);
 		}
 	};

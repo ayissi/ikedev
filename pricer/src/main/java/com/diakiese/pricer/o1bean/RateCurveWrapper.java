@@ -9,8 +9,7 @@ import org.joda.time.DateTime;
 public class RateCurveWrapper {
 	
 	Map<DateTime,List<RateCoordinate>> rateCoordinatesByDate ;
-
-		
+	
 	public Map<DateTime, List<RateCoordinate>> getRateCoordinatesByDate() {
 		return rateCoordinatesByDate;
 	}

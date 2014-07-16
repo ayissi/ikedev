@@ -15,28 +15,25 @@ import au.com.bytecode.opencsv.CSVReader;
 import com.diakiese.pricer.o1bean.RateCoordinate;
 import com.diakiese.pricer.o1bean.RateCurveEntry;
 import com.diakiese.pricer.o1bean.RateCurveWrapper;
-
-public class RateCurveBuilderImpl implements IRateCurveBuilder {
-
-	final static Logger log = Logger.getLogger(RateCurveBuilderImpl.class);
+														
+public class CSVRateCurveBuilderImpl implements IRateCurveBuilder {
+	
+	final static Logger log = Logger.getLogger(CSVRateCurveBuilderImpl.class);
 	final static String rateFile = "C:/taux2.csv";										
 
-
-
-
-	public  RateCurveWrapper createRateCurve(String fileLocation) throws IOException {												 
+	public  RateCurveWrapper createRateCurve() throws IOException {												 
 		RateCurveWrapper rateCurveWrapper = new RateCurveWrapper();							
 		Map<DateTime,List<RateCoordinate>> rateCurve = new LinkedHashMap<DateTime,List<RateCoordinate>>();
 		RateCurveEntry rateCurveEntry = new RateCurveEntry();	
 		CSVReader reader = null;
 		try{						
-			reader = new CSVReader(new FileReader(fileLocation),';'); 
+			reader = new CSVReader(new FileReader(rateFile),';'); 
 			List<String[]> records = reader.readAll();
 			List<String[]> datas = records.subList(1, records.size());
 			String[]  periodZones = records.get(0);															
 			log.info("NBRE RECORDS: " + records.size());
 			log.info("NBRE DATAS: " + datas.size());
-			int i=1;  
+			int i=1;							  
 			for(String[] data:datas){
 				rateCurveEntry = buildRateEntry(data,periodZones);		
 				rateCurveEntry.initDate();
@@ -58,34 +55,40 @@ public class RateCurveBuilderImpl implements IRateCurveBuilder {
 		return rateCurveWrapper;  
 	}
 	
-
-
+										
 	/**
 	 * retourne une <b>RateCurveEntry</b>
-	 * 
 	 * */
 	public RateCurveEntry buildRateEntry(String[] tabKeys,String[] tabPeriodZones){
 		RateCurveEntry rateCurveEntry = new RateCurveEntry();														 
 		rateCurveEntry.setKey(tabKeys[0]);				
 		List<RateCoordinate> rateCoordinates = new ArrayList<RateCoordinate>(); 
-		Double rate = new Double(0.0);
+		Double rate = new Double(0.0);							
 		String periodZone = "";
+		Double periodYear = 0.0;	
 		for(int i=1;i<tabKeys.length-1;i++){
 			periodZone = tabPeriodZones[i];
+			periodYear = buildPeriodYear(periodZone);
 			try{
 			rate = new Double(tabKeys[i]);
-			rateCoordinates.add(new RateCoordinate(periodZone,rate));
+			rateCoordinates.add(new RateCoordinate(periodYear,rate));
 			}catch(Exception e){
-			log.info("PeriodZone: " + periodZone);
+//			log.info("PeriodZone: " + periodZone);	
 			if(periodZone.length()>0){ 
-				rateCoordinates.add(new RateCoordinate(periodZone));
+				rateCoordinates.add(new RateCoordinate(periodYear));
 			  }
 			}
 		}						
-		log.info("\n");
+//		log.info("\n");
 		rateCurveEntry.setRateCoordinates(rateCoordinates);
 		return rateCurveEntry;
 	}
 	
- 
+
+	public Double buildPeriodYear(String periodZone){ 
+		String[] tabToMov_ZC = periodZone.split("ZC");
+		String[] tabToMov_YR = tabToMov_ZC[1].split("YR");
+		return  new Double(tabToMov_YR[0])*0.01 ; 
+	}
+			
 }

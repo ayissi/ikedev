@@ -7,6 +7,6 @@ import com.diakiese.pricer.o1bean.RateCurveWrapper;
 
 
 public interface IRateCurveBuilder {
-
-	RateCurveWrapper createRateCurve(String fileLocation) throws IOException; 
+	
+	RateCurveWrapper createRateCurve() throws IOException; 
 }

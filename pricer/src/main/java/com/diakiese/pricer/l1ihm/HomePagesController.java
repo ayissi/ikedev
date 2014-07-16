@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.diakiese.pricer.l1weblayer;
+package com.diakiese.pricer.l1ihm;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;

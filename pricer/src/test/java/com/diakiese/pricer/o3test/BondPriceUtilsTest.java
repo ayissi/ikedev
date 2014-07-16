@@ -10,7 +10,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.diakiese.pricer.l2servicelayer.RateCurveBuilderImpl;
+import com.diakiese.pricer.l2servicelayer.CSVRateCurveBuilderImpl;
 import com.diakiese.pricer.o1bean.RateCoordinate;
 import com.diakiese.pricer.o3utils.BondPricerUtils;
 import com.diakiese.pricer.o1bean.RateCurveWrapper;
@@ -24,13 +24,13 @@ public class BondPriceUtilsTest {
 	Double periodYear;
 	BondPricerUtils bondUtils;
 	final static String testFile = "C:/taux6.csv";	
-
+			
 	@Before
 	public void setUp() throws IOException{
 		DateTime entryDate = new DateTime(new DateTime(1993,1,4,0,0,0));
-		RateCurveBuilderImpl builder = new RateCurveBuilderImpl();  
-		RateCurveWrapper rateCurveWrapper = builder.createRateCurve(testFile); 
-		Map<DateTime,List<RateCoordinate>> rateCurve = rateCurveWrapper.getRateCurveDateTimed();  
+		CSVRateCurveBuilderImpl builder = new CSVRateCurveBuilderImpl();  
+		RateCurveWrapper rateCurveWrapper = builder.createRateCurve(); 
+		Map<DateTime,List<RateCoordinate>> rateCurve = rateCurveWrapper.getRateCoordinatesByDate();  
 		rateCoordinates = rateCurve.get(entryDate);
 		bondUtils = new BondPricerUtils();
 	}
@@ -63,6 +63,7 @@ public class BondPriceUtilsTest {
 	}
 	
 
+	
 	@SuppressWarnings("static-access")
 	@Test 
 	public void testLinearInterpolation(){
@@ -79,25 +80,74 @@ public class BondPriceUtilsTest {
 		assertThat(interpolatedVal).isEqualTo(expectedInterpolVal);
 	}
 	
-
-	
+			
 	@Test
-	public void testGetRateByBillingDate(){
+	public void testGetNombreDeFluxRestant(){
 		
 		//GIVEN 
-		/**
-		 * Bond bond,
-		 * DateTime pricingDate,
-		 * Map<DateTime, List<RateCoordinate>> rateCoordinatesByDate, 
-		 * */
+		Double d1 = new Double(0.0);
+		Double d2 = new Double(1);
 		//WHEN 
 		
 		
 		//THEN
-		
+		assertThat(d2).isEqualTo(d1);
 	}
 	
 
+	@Test
+	public void testGetRateByBillingDate(){
+		
+		//GIVEN 
+		Double d1 = new Double(0.0);
+		Double d2 = new Double(1);
+		//WHEN 
+		
+		
+		//THEN
+		assertThat(d2).isEqualTo(d1);
+	}
+	
+
+	@Test
+	public void testGetAccurateRateCoordinates(){ 	
+		//GIVEN 
+		Double d1 = new Double(0.0);
+		Double d2 = new Double(1);
+		//WHEN 
+		
+		
+		//THEN
+		assertThat(d2).isEqualTo(d1);
+	}
+	
+	@Test
+	public void testGetRatioAlpha(){
+		
+		//GIVEN 
+		Double d1 = new Double(0.0);
+		Double d2 = new Double(1);
+		//WHEN 
+		
+		
+		//THEN
+		assertThat(d2).isEqualTo(d1);
+	}
+	
+	
+	@Test
+	public void testGetFlux(){ 	
+		//GIVEN 
+		Double d1 = new Double(0.0);
+		Double d2 = new Double(1);
+		//WHEN 
+		
+		
+		//THEN
+		assertThat(d2).isEqualTo(d1);
+	}
+
+	
 	@After
 	public void tearDown(){
 		rateCoordinates =null;

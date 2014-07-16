@@ -2,7 +2,6 @@ package com.diakiese.pricer.o3utils;
 
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -93,12 +92,12 @@ public class RateCurveBuilderImpl implements IRateCurveBuilder {
 			reader = new CSVReader(new FileReader(fileLocation),';'); 
 			List<String[]> records = reader.readAll();
 			List<String[]> datas = records.subList(1, records.size());
-			String[]  periodZones = records.get(0);															
+			String[]  periodZones = records.get(0);																		
 			log.info("NBRE RECORDS: " + records.size());
 			log.info("NBRE DATAS: " + datas.size());
-			int i=1;
+			int i=1;																					
 			for(String[] data:datas){
-				rateCurveEntry = buildRateEntry(data,periodZones);		
+//				rateCurveEntry = buildRateEntry(data,periodZones);		
 				rateCurveEntry.initDate();
 //				rateCurve.put(rateCurveEntry.getKey(), rateCurveEntry.getRateCoordinates());
 				rateCurve2.put(rateCurveEntry.getDate(), rateCurveEntry.getRateCoordinates());
@@ -120,28 +119,28 @@ public class RateCurveBuilderImpl implements IRateCurveBuilder {
 	}
 	
 
-	public RateCurveEntry buildRateEntry(String[] tabKeys,String[] tabPeriodZones){
-		RateCurveEntry rateCurveEntry = new RateCurveEntry();								 
-		rateCurveEntry.setKey(tabKeys[0]);				
-		List<RateCoordinate> rateCoordinates = new ArrayList<RateCoordinate>(); 
-		Double rate = new Double(0.0);
-		String periodZone = "";
-		for(int i=1;i<tabKeys.length-1;i++){
-			periodZone = tabPeriodZones[i];
-			try{
-			rate = new Double(tabKeys[i]);
-			rateCoordinates.add(new RateCoordinate(periodZone,rate));
-			}catch(Exception e){
-			log.info("PeriodZone: " + periodZone);
-			rateCoordinates.add(new RateCoordinate(periodZone));
-			}
-		}						
-		log.info("\n");
-		rateCurveEntry.setRateCoordinates(rateCoordinates);
-		return rateCurveEntry;
-	}
+//	public RateCurveEntry buildRateEntry(String[] tabKeys,String[] tabPeriodZones){
+//		RateCurveEntry rateCurveEntry = new RateCurveEntry();								 
+//		rateCurveEntry.setKey(tabKeys[0]);				
+//		List<RateCoordinate> rateCoordinates = new ArrayList<RateCoordinate>(); 
+//		Double rate = new Double(0.0);
+//		String periodZone = "";
+//		for(int i=1;i<tabKeys.length-1;i++){
+//			periodZone = tabPeriodZones[i];
+//			try{
+//			rate = new Double(tabKeys[i]);
+//			rateCoordinates.add(new RateCoordinate(periodZone,rate));
+//			}catch(Exception e){
+//			log.info("PeriodZone: " + periodZone);
+//			rateCoordinates.add(new RateCoordinate(periodZone));
+//			}
+//		}						
+//		log.info("\n");
+//		rateCurveEntry.setRateCoordinates(rateCoordinates);
+//		return rateCurveEntry;
+//	}
 	
- 
+
 	public static void main(String[] args) throws IOException {
 		RateCurveBuilderImpl builder = new RateCurveBuilderImpl();  
 		RateCurveWrapper rateCurveWrapper = builder.createRateCurve2();  
@@ -157,4 +156,5 @@ public class RateCurveBuilderImpl implements IRateCurveBuilder {
 //		BondPricerUtils.displayDates(billingDates);
 //		BondPricerUtils.displayDates(BondPricerUtils.getFuturesBillingDates_toRefactor(6, 6, dateEmission, pricingDate));
 	}
+			
 }

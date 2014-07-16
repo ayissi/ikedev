@@ -18,8 +18,8 @@ import com.diakiese.pricer.o1bean.RateCoordinate;
 
                                                 
 public class BondPricerUtils {
-		
-//	final static Logger log = Logger.getLogger(BondPricerUtils.class);
+								
+	final static Logger log = Logger.getLogger(BondPricerUtils.class);
 	/**
 	 * retourne l'ensemble des dates des coupons associés à une Obligation 
 	 * @param bondPeriodicity la periodicite de l'obligation (en mois)
@@ -114,42 +114,24 @@ public class BondPricerUtils {
 		String laDate = new StringBuilder().append(date.getDayOfMonth()).append("/").append(date.getMonthOfYear()).append("/").append(date.getYear()).toString();
 		return laDate;
 	}
-
-
-	/**
-	 * retourne une map dont chaque clé represente une date de flux,et la valeur le montant du coupon a cette date
-	 * @param bond l'obligation
-	 * @param futuresBillingDates les dates des flux 
-	 * */
-	public static Map<DateTime,Double> getFluxByBillingDates(Bond bond, List<DateTime> futuresBillingDates){
-		Map<DateTime,Double> fluxByBillingDate = new LinkedHashMap<DateTime,Double>();
-		for(int i =0;i<=futuresBillingDates.size()-2;i++){
-			fluxByBillingDate.put(futuresBillingDates.get(i), bond.getCoupon());
-		}
-
-		fluxByBillingDate.put(futuresBillingDates.get(futuresBillingDates.size()-1), bond.getNominalAmount() + bond.getCoupon());
-		return fluxByBillingDate; 
-	}
-
-	/**
-	 * retourne l'ensemble des dates des flux futurs associés à une Obligation relativement à la date de pricing
-	 * @param bondPeriodicity la periodicite de l'obligation (en mois)
-	 * @param bondMaturity la maturité de l'obligation (en années)
-	 * @param bondEmissionDate la date d'emission de l'obligation
-	 * @param pricingDate la date de pricing 
-	 * */	
-	/*				
-	public static List<DateTime> getFuturesBillingDates(int bondPeriodicity,int bondMaturity,DateTime bondEmissionDate,DateTime pricingDate){
-		Set<DateTime> billingDates = getBillingDates(bondPeriodicity, bondMaturity, bondEmissionDate);
-		List<DateTime> futuresBillingDates = new LinkedList<DateTime>();
-		for(DateTime date:billingDates){
-			if(date.compareTo(pricingDate)>=0){
-				futuresBillingDates.add(date);
-			}
-		}		
-		return futuresBillingDates ;
-	}*/
 		
+	
+//	/**
+//	 * retourne une map dont chaque clé represente une date de flux,et la valeur le montant du coupon a cette date
+//	 * @param bond l'obligation
+//	 * @param futuresBillingDates les dates des flux 
+//	 * */
+//	public static Map<DateTime,Double> getFluxByBillingDates(Bond bond, List<DateTime> futuresBillingDates){
+//		Map<DateTime,Double> fluxByBillingDate = new LinkedHashMap<DateTime,Double>();
+//		for(int i =0;i<=futuresBillingDates.size()-2;i++){
+//			fluxByBillingDate.put(futuresBillingDates.get(i), bond.getCoupon());
+//		}
+//
+//		fluxByBillingDate.put(futuresBillingDates.get(futuresBillingDates.size()-1), bond.getNominalAmount() + bond.getCoupon());
+//		return fluxByBillingDate; 
+//	}
+
+
 
 	/**
 	 * retourne le nombre de flux restant de l'obligation, relativement à la date de pricing
@@ -157,8 +139,14 @@ public class BondPricerUtils {
 	 * @param pricingDate la date de pricing						    
 	 * */
 	public static int getNombreDeFluxRestant(Bond bond, DateTime pricingDate){
-		return getFuturesBillingDates(bond.getPeriodicity(), bond.getBondMaturity(),bond.getEmissionDate(), pricingDate).size();
-		
+		int nbreFluxRestant =0;
+		DateTime datePremierCoupon = bond.getEmissionDate().plusMonths(bond.getPeriodicity());
+		for(DateTime billingDate = datePremierCoupon; billingDate.compareTo(bond.getEmissionDate().plusYears(bond.getBondMaturity()))<=0; billingDate = billingDate.plusMonths(bond.getPeriodicity())){
+			if(billingDate.compareTo(pricingDate)>0){
+				nbreFluxRestant ++;
+			}
+		}
+		return nbreFluxRestant;  		
 	}
 					
 	/**
@@ -220,67 +208,19 @@ public class BondPricerUtils {
 		return rateCoordinate; 
 	}
 
+	
 
 	/**
-	 * retourne les intérêts pour chaque date de paiement
-	 * @param pricingDate la date de pricing
-	 * @param rateCoordinatesByDate la liste des taux pour chaque date
+	 * calcule et retourne la valeur du taux correspondant à <b>_periodYear</b>	
+	 * @param rateCoordinates les paramètres de la LINE_CHART obtenu de la courbe des taux sur une date,
+	 *        c'est de cette LINE_CHART que sera calculé le TAUX.   
+	 * @param periodYear la "date" dont il n'existe pas le taux sur LINE_CHART 
 	 * */
-	public static Map<DateTime,Interest> getInterestByBillingDate(DateTime pricingDate,
-			List<DateTime> futuresBillingDates,
-			Map<DateTime, List<RateCoordinate>> rateCoordinatesByDate){
-	   Map<DateTime, Interest> interestByDate = new LinkedHashMap<DateTime,Interest>();
-	   Double ratioDate ;
-	   Double rate ;
-	   Interest interest = new Interest();
-	   RateCoordinate floorRateCoordinate = new RateCoordinate();
-	   RateCoordinate ceilRateCoordinate = new RateCoordinate();
-	   
-	   for(DateTime billingDate: futuresBillingDates){
-		  ratioDate = getDurationRatio(pricingDate, billingDate);
-		  interest.setRatioDate(ratioDate);			
-		  floorRateCoordinate = getFloorRateCoordinate(rateCoordinatesByDate.get(billingDate),ratioDate);
-		  ceilRateCoordinate = getCeilRateCoordinate(rateCoordinatesByDate.get(billingDate),ratioDate);
-		  if(floorRateCoordinate!=null && ceilRateCoordinate!=null){
-			  rate = linearInterpolation(floorRateCoordinate,ceilRateCoordinate, ratioDate); 
-		  }else{
-			  rate = new Double(0.0);
-		  }    
-		  interest.setRate(rate);				
-		  interestByDate.put(billingDate,interest); 
-	   }
-	  return interestByDate; 
+	public static Double  computeInterpolatedRate(List<RateCoordinate> rateCoordinates, Double periodYear){ 		
+		RateCoordinate floorRateCoordinate = getFloorRateCoordinate(rateCoordinates, periodYear);
+		RateCoordinate ceilRateCoordinate = getCeilRateCoordinate(rateCoordinates, periodYear);
+		return linearInterpolation(floorRateCoordinate, ceilRateCoordinate, periodYear);   
 	}
-	
-//	/**
-//	 * retourne les intérêts pour chaque date de paiement
-//	 * @param pricingDate la date de pricing
-//	 * @param rateCoordinatesByDate la liste des taux pour chaque date
-//	 * */
-//	public static Map<DateTime,Interest> getInterestByBillingDate(DateTime pricingDate,
-//			List<DateTime> futuresBillingDates, Map<DateTime,List<RateCoordinate>> rateCoordinatesByDate){
-//	   Map<DateTime, Interest> interestByDate = new LinkedHashMap<DateTime,Interest>();
-//	   Double ratioDate ;
-//	   Double rate ;
-//	   Interest interest = new Interest();
-//	   RateCoordinate floorRateCoordinate = new RateCoordinate();
-//	   RateCoordinate ceilRateCoordinate = new RateCoordinate();
-//	   
-//	   for(DateTime billingDate: futuresBillingDates){
-//		  ratioDate = getDurationRatio(pricingDate, billingDate);
-//		  interest.setRatioDate(ratioDate);			
-//		  floorRateCoordinate = getFloorRateCoordinate(rateCoordinatesByDate.get(billingDate),ratioDate);
-//		  ceilRateCoordinate = getCeilRateCoordinate(rateCoordinatesByDate.get(billingDate),ratioDate);
-//		  if(floorRateCoordinate!=null && ceilRateCoordinate!=null){
-//			  rate = linearInterpolation(floorRateCoordinate,ceilRateCoordinate, ratioDate); 
-//		  }else{
-//			  rate = new Double(0.0);
-//		  }    
-//		  interest.setRate(rate);
-//		  interestByDate.put(billingDate,interest); 
-//	   }
-//	  return interestByDate; 
-//	}
 
 
 	/**
@@ -321,7 +261,7 @@ public class BondPricerUtils {
        	}
        	return rateCoordinates;
    }
-   
+  
    	/**
    	 * retourne la valeur "alpha" de l'algo de pricing 
    	 * @param bond l'obligation
@@ -337,7 +277,7 @@ public class BondPricerUtils {
 	  return diffDays/daysPerYear;
    }
    
-   		
+
 	/**
 	 * calcule le flux...
 	 * */
@@ -347,7 +287,7 @@ public class BondPricerUtils {
 	}
 			
 	//calculate the flux
-	public static double getLastFlux(double coupon, double nominal, double rate,double puissance) {	
+	public  double getLastFlux(double coupon, double nominal, double rate,double puissance) {	
 		double denominateur = Math.pow(1+rate, puissance); 
 		return (coupon+nominal)/denominateur;
 	}
