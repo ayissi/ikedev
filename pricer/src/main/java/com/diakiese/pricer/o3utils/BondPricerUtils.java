@@ -1,19 +1,17 @@
 package com.diakiese.pricer.o3utils;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
+																
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
 
 import com.diakiese.pricer.o1bean.Bond;
-import com.diakiese.pricer.o1bean.Interest;
 import com.diakiese.pricer.o1bean.RateCoordinate;
 
                                                 
@@ -115,23 +113,6 @@ public class BondPricerUtils {
 		return laDate;
 	}
 		
-	
-//	/**
-//	 * retourne une map dont chaque clé represente une date de flux,et la valeur le montant du coupon a cette date
-//	 * @param bond l'obligation
-//	 * @param futuresBillingDates les dates des flux 
-//	 * */
-//	public static Map<DateTime,Double> getFluxByBillingDates(Bond bond, List<DateTime> futuresBillingDates){
-//		Map<DateTime,Double> fluxByBillingDate = new LinkedHashMap<DateTime,Double>();
-//		for(int i =0;i<=futuresBillingDates.size()-2;i++){
-//			fluxByBillingDate.put(futuresBillingDates.get(i), bond.getCoupon());
-//		}
-//
-//		fluxByBillingDate.put(futuresBillingDates.get(futuresBillingDates.size()-1), bond.getNominalAmount() + bond.getCoupon());
-//		return fluxByBillingDate; 
-//	}
-
-
 
 	/**
 	 * retourne le nombre de flux restant de l'obligation, relativement à la date de pricing
@@ -304,17 +285,5 @@ public class BondPricerUtils {
 	   return dateProchainCoupon;
    }
    
-	/**
-	 * calcule le prix de l'obligation caractérisée par:
-	 * @param couponByBillingDate le flux pour chaque date de paiement
-	 * @param interestByBillingDate les interêts pour chaque date de paiement
-	 * @param billingDates  les dates de paiemment
-	 * */
-	public static Double getBondPrice(Map<DateTime,Double> couponByBillingDate,Map<DateTime,Interest> interestByBillingDate,List<DateTime> billingDates){
-		Double bondPrice = new Double(0.0);
-		for(DateTime billingDate:billingDates){
-			bondPrice = bondPrice + interestByBillingDate.get(billingDate).getInterest()*couponByBillingDate.get(billingDate);
-		}
-		return bondPrice ;
-	}
+
 }

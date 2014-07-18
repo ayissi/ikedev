@@ -17,7 +17,7 @@ public class Bond {
 	/**
 	 * la periodicité exprimée en mois
 	 * */
-	private Integer periodicity ;
+	private Integer periodicityInMonths ;
 	
 	/**
 	 * la maturité exprimée en année
@@ -34,12 +34,19 @@ public class Bond {
 	 * */
 	private Double nominalAmount;
 
+	private Double periodicityInYear ;
 	
+	public Double getPeriodicityInYear() {
+		return periodicityInYear;
+	}
+	public void setPeriodicityInYear(Double periodicityInYear) {
+		this.periodicityInYear = periodicityInYear;
+	}
 	public Integer getPeriodicity() {
-		return periodicity;
+		return periodicityInMonths;
 	}
 	public void setPeriodicity(Integer periodicity) {
-		this.periodicity = periodicity;
+		this.periodicityInMonths = periodicity;
 	}
 	public Integer getBondMaturity() {
 		return bondMaturity;
@@ -66,7 +73,7 @@ public class Bond {
 	
 		String s = new StringBuilder().
 				 append("Periodicité: ")
-				.append(this.periodicity)
+				.append(this.periodicityInMonths)
 				.append(" mois")
 				.append(" Maturité: ")
 				.append(this.bondMaturity)
@@ -83,21 +90,22 @@ public class Bond {
 		
 	private Bond(BondBuilder builder){
 		this.bondMaturity = builder.bondMaturity;
-		this.periodicity = builder.periodicity ;
+		this.periodicityInMonths = builder.periodicityInMonths ;
 		this.emissionDate = builder.emissionDate ;
 		this.nominalAmount = builder.nominalAmount ;
+		this.periodicityInYear = builder.periodicityInYear;	
 	}
-	
 
-	
+
 	public class BondBuilder {
-		private Integer periodicity ;
+		private Integer periodicityInMonths ;
 		private Integer bondMaturity;
 		private DateTime emissionDate;
 		private Double nominalAmount;
+		private Double periodicityInYear ;
 		
 		public BondBuilder withPeriodicity(Integer periodicity){
-			this.periodicity = periodicity ;
+			this.periodicityInMonths = periodicity ;
 			return this ;
 		}
 		
@@ -116,6 +124,10 @@ public class Bond {
 			return this;
 		}
 		
+		public BondBuilder withPeriodicityInYear(Double periodicityInYear){
+			this.periodicityInYear = periodicityInYear;
+			return this;  
+		}
 
 		public Bond build(){
 			return new Bond(this);

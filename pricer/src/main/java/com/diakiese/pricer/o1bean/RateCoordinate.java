@@ -35,5 +35,16 @@ public class RateCoordinate {
 			
 	}
 	
+	@Override
+	public boolean equals(Object o){
+		boolean b = false;
+		if(o instanceof RateCoordinate){
+		    RateCoordinate that = (RateCoordinate)o;
+			if((this.getPeriodYear().equals(that.getPeriodYear())&&(this.getRate().equals(that.getRate())))){
+				b = true ; 
+			}
+		}	
+		return b;
+	}
 	
 }

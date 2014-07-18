@@ -7,10 +7,11 @@ import java.util.Map;
 import org.joda.time.DateTime;
 
 import com.diakiese.pricer.o1bean.RateCoordinate;
+import com.diakiese.pricer.o1bean.TYPE_PRICING;
 
 public interface IBondPricerService {
 	
-	Double price(DateTime pricingDate) throws IOException;     
+	Double price(DateTime pricingDate,TYPE_PRICING pricingType);     
 	
-	Map<DateTime, List<RateCoordinate>> buildRateCoordinatesByDate() throws IOException; 
+	
 }
