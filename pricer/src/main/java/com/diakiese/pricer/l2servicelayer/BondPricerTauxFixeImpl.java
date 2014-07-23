@@ -41,28 +41,26 @@ public class BondPricerTauxFixeImpl implements IBondPricerTauxFixeService {
 
 	public BondPricerTauxFixeImpl(IRateCurveBuilder rateCurveBuilder){
 		try{
-			this.rateCoordinatesByDate = rateCurveBuilder.createRateCurve().getRateCoordinatesByDate();
+			this.rateCoordinatesByDate = rateCurveBuilder.createRateCurve(rateCurveBuilder.getFile()).getRateCoordinatesByDate(); 
 		}catch(Exception e){
 			e.printStackTrace();
 		}
 	}
-	
+
 	@Override
 	public Double price(DateTime pricingDate,TYPE_PRICING typePricing) {
 		Double thePrice = new Double(0.0);
 		switch(typePricing){
-		case  COUPON_SIMPLE:
-			thePrice = priceSimpleCoupon(pricingDate);
-			break;
-		case COUPON_COURU : 
-			thePrice = priceCouponCouru(pricingDate);
-			break;
+		case COUPON_SIMPLE:thePrice = priceSimpleCoupon(pricingDate);break;
+		case COUPON_COURU : thePrice = priceCouponCouru(pricingDate);break;
 		default:
 			break; 
 		}
 		return thePrice;
 	}
 
+
+		
 	public Double priceSimpleCoupon(DateTime pricingDate){
 		double price = 0;  
 		List<RateCoordinate> rateCoordinates = getAccurateRateCoordinates(rateCoordinatesByDate,pricingDate);	
@@ -71,24 +69,24 @@ public class BondPricerTauxFixeImpl implements IBondPricerTauxFixeService {
 			Double ratioAlpha = getRatioAlpha(bond, pricingDate);   
 			int incrementDeFlux = 0;		  						
 			int nbreDeFluxRestant = getNombreDeFluxRestant(bond, pricingDate);																			  
-			double rateInterpolated = 0.0; 
+			double rateInterpolated = 0.0;								 
 			while(incrementDeFlux <= nbreDeFluxRestant -1){	
 				//1- calculer le taux interpolé x+alpha ie , a ratioAlpha + incrementDeFlux*period !
 				rateInterpolated = interpolator.interpolate(rateCoordinates,ratioAlpha + incrementDeFlux*bond.getPeriodicityInYear());//interpolation de taux au rangs alpha, 1+alpha,2+alpha ?	
 			   	
 				//2- calculer le flux indice "incrementDeFlux", et actualisé le prix de l'obligation
-				price += getFlux(computeCoupon(getTauxFixe(),bond), rateInterpolated, ratioAlpha + incrementDeFlux*period); //Calcul du flux avec le taux au rang :(ratioAlpha + incrementDeFlux) et a la puissance ratioAlpha +nb*period
+				price += getFlux(computeCoupon(getTauxFixe(),bond), rateInterpolated, ratioAlpha + incrementDeFlux*bond.getPeriodicityInYear()); //Calcul du flux avec le taux au rang :(ratioAlpha + incrementDeFlux) et a la puissance ratioAlpha +nb*period
 //				log.info("DATE: " + BondPricerUtils.getDateStringFormat(pricingDate) +"\tRATIO ALPHA: " + ratioAlpha + "\tPUISSANCE: "+ ratioAlpha + incrementDeFlux*period +"\tNBRE_FLUX_RESTANT: " + nbreDeFluxRestant +"\tINCR_FLUX: " + incrementDeFlux + "\tPRIX ACTUALISE: " + price);												 
 				incrementDeFlux++;
 			}															 	
-			rateInterpolated = interpolator.interpolate(rateCoordinates,ratioAlpha + incrementDeFlux*period);
-			price = price + getLastFlux(computeCoupon(getTauxFixe(),bond), bond.getNominalAmount(),rateInterpolated, ratioAlpha + incrementDeFlux*period); 
+			rateInterpolated = interpolator.interpolate(rateCoordinates,ratioAlpha + incrementDeFlux*bond.getPeriodicityInYear());
+			price = price + getLastFlux(computeCoupon(getTauxFixe(),bond), bond.getNominalAmount(),rateInterpolated, ratioAlpha + incrementDeFlux*bond.getPeriodicityInYear()); 
 //			log.info("DATE: " + BondPricerUtils.getDateStringFormat(pricingDate) +"\tRATIO ALPHA: " + ratioAlpha +"\tPUISSANCE: "+ ratioAlpha + incrementDeFlux*period +"\tPRIX_FINAL: "  + price + "\tNBRE_FLUX_TOTAL: " +nbreDeFluxRestant + "\n");         
 		}
 	    return price;
 	}
 	
-
+			
 	public Double priceCouponCouru(DateTime pricingDate){
 		double price = 0;  
 		List<RateCoordinate> rateCoordinates = getAccurateRateCoordinates(rateCoordinatesByDate,pricingDate);	
@@ -175,8 +173,9 @@ public class BondPricerTauxFixeImpl implements IBondPricerTauxFixeService {
 	    * */
 	   public List<RateCoordinate> getAccurateRateCoordinates(Map<DateTime,List<RateCoordinate>> rateCoordinatesByDate,DateTime dateEntry){
 		   List<RateCoordinate> rateCoordinates = new ArrayList<RateCoordinate>();
+	       DateTime accurateDay = dateEntry;
 		   if(rateCoordinatesByDate!=null){
-		       	DateTime accurateDay = dateEntry;																							
+		       	accurateDay = dateEntry;																							
 		       	rateCoordinates = rateCoordinatesByDate.get(dateEntry);
 		       	if(rateCoordinates==null){
 		       		do{
@@ -192,7 +191,7 @@ public class BondPricerTauxFixeImpl implements IBondPricerTauxFixeService {
 				       		rateCoordinates = rateCoordinatesByDate.get(accurateDay); 
 			       		}
 		       	}
-		   }
+		      }
 		   }
 	       return rateCoordinates;
 	 }

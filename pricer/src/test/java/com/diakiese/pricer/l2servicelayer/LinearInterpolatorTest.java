@@ -18,7 +18,7 @@ import com.diakiese.pricer.o1bean.RateCoordinate;
 
 public class LinearInterpolatorTest {
 	final static Logger log = Logger.getLogger(LinearInterpolatorTest.class);	
-	private TestRateCurveBuilderImpl testRateCurveBuilderImpl=null;
+	private TestCSVRateCurveBuilderImpl testRateCurveBuilderImpl=null;
 	
 	Map<DateTime, List<RateCoordinate>> rateCurvesByDate ;
 	DateTime pricingDate ;
@@ -29,8 +29,8 @@ public class LinearInterpolatorTest {
 	public void setUp() throws IOException{ 
 	    log.info("SETUP  DOWNNNN");
 		if((testeur==null)&&(testRateCurveBuilderImpl==null)&&(rateCurvesByDate==null)){
-			this.testRateCurveBuilderImpl = new TestRateCurveBuilderImpl();             
-			this.rateCurvesByDate = testRateCurveBuilderImpl.createRateCurve().getRateCoordinatesByDate(); 
+			this.testRateCurveBuilderImpl = new TestCSVRateCurveBuilderImpl();             
+			this.rateCurvesByDate = testRateCurveBuilderImpl.createRateCurve(testRateCurveBuilderImpl.getFile()).getRateCoordinatesByDate(); 
 			this.testeur = new LinearInterpolator();
 		}
 

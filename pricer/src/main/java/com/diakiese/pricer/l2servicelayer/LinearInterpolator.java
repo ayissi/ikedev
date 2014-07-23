@@ -31,10 +31,8 @@ public class LinearInterpolator implements Iinterpolator {
 	 * @param midPeriodYear la periodYear de X, borné par floorElt.periodYear et ceilElt.periodYear 
 	 * */						  
 	public  Double linearInterpolation(RateCoordinate floorElt, RateCoordinate ceilElt, Double midPeriodYear){
-		Double d = new Double(0.0);
-		if((floorElt==null)||ceilElt==null){
-			return d;
-		}else if(!ceilElt.getPeriodYear().equals(floorElt.getPeriodYear())&&(floorElt!=null)&&(ceilElt!=null)&&(floorElt.getRate()!=null)&&(ceilElt.getRate()!=null)){
+		Double d = new Double(0.0);		
+		if(!ceilElt.getPeriodYear().equals(floorElt.getPeriodYear())&&(floorElt!=null)&&(ceilElt!=null)&&(floorElt.getRate()!=null)&&(ceilElt.getRate()!=null)){
 //			log.info("FLOOR PERIOD YEAR: " +floorElt.getPeriodYear()+ "\tCEIL PERIOD YEAR: " + ceilElt.getPeriodYear() +"\tMID PERIOD YEAR: " + midPeriodYear +"\tFLOOR RATE" + floorElt.getRate() + "\tCEIL RATE " + ceilElt.getRate());
 			Double quotient = ceilElt.getPeriodYear()-floorElt.getPeriodYear();  
 			Double d1 = ((ceilElt.getPeriodYear()-midPeriodYear)/(quotient))*floorElt.getRate();
@@ -54,13 +52,8 @@ public class LinearInterpolator implements Iinterpolator {
 		Double periodYearCent = _periodYear * 100.0;							
 		Integer _period = periodYearCent.intValue();
 		Integer position = _period/25;																										
-		if(rateCoordinates==null){				 
-//			rateCoordinate.setPeriodYear(new Double(0.0));
-//			rateCoordinate.setRate(new Double(0.0)); 
-//			rateCoordinate = rateCoordinates.get(rateCoordinates.size()-1) ;
-			return null ;										
-		}else if((position>rateCoordinates.size())){		
-			rateCoordinate = rateCoordinates.get(rateCoordinates.size()-1) ;	
+		if(rateCoordinates==null ||(position>rateCoordinates.size())){
+			return null;  
 		}else if(position==rateCoordinates.size()){
 			rateCoordinate = rateCoordinates.get(rateCoordinates.size()-1) ;
 		}else if(position==0){
@@ -82,14 +75,9 @@ public class LinearInterpolator implements Iinterpolator {
 		RateCoordinate rateCoordinate = new RateCoordinate();
 		Double periodYearCent = _periodYear * 100.0;
 		Integer _period = periodYearCent.intValue();
-		Integer position = _period/25; 														
-		if((rateCoordinates==null)){
-//			rateCoordinate.setPeriodYear(new Double(0.0));
-//			rateCoordinate.setRate(new Double(0.0)); 
-			return null ;	
-			
-		}else if((position>rateCoordinates.size())){
-			rateCoordinate = rateCoordinates.get(rateCoordinates.size()-1) ;	
+		Integer position = _period/25;														
+		if((rateCoordinates==null)||(position>rateCoordinates.size())){
+			return null;																		
 		}else if(position==rateCoordinates.size()){ 
 			rateCoordinate = rateCoordinates.get(rateCoordinates.size()-1) ;
 		}else if(position==0){
@@ -100,17 +88,19 @@ public class LinearInterpolator implements Iinterpolator {
 		return rateCoordinate; 
 	  }
 
-	
+
 	@Override
 	public Double interpolate(List<RateCoordinate> rateCoordinates,
-			Double midPeriodYear) {
+			Double midPeriodYear){
+		Double d = 0.0;   
 		RateCoordinate floorCoordinate = getFloorRateCoordinate(rateCoordinates, midPeriodYear);
 		RateCoordinate ceilCoordinate = getCeilRateCoordinate(rateCoordinates, midPeriodYear);
-		if(floorCoordinate==null ||ceilCoordinate==null){
-		return null; 	
-		}else{
-			return linearInterpolation(floorCoordinate,ceilCoordinate,midPeriodYear);	
+		if(!(floorCoordinate==null ||ceilCoordinate==null)){
+//		return d;														  	
+//		}else{
+			d= linearInterpolation(floorCoordinate,ceilCoordinate,midPeriodYear);	
 		}
+		return d ;
 		
 	}
 	

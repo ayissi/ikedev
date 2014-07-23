@@ -23,7 +23,7 @@ public class BondPricerTauxFixeImplTest {
 	static Iinterpolator interpolator;  
 	@BeforeClass
 	public static void prepareTestEnv(){
-		pricer = new BondPricerTauxFixeImpl(new TestRateCurveBuilderImpl());
+		pricer = new BondPricerTauxFixeImpl(new TestCSVRateCurveBuilderImpl());
 		emissionDate = new DateTime(1993,1,1,0,0,0);
     	Bond.BondBuilder bondBuilder = new Bond().new BondBuilder(); 
 		bond = bondBuilder.withPeriodicity(3)
