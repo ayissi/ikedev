@@ -1,5 +1,5 @@
 package com.diakiese.l1controllers;
 
-public class City {
+public class CountryLanguageController {
 
 }
