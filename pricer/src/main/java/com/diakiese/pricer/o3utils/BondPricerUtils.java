@@ -1,12 +1,14 @@
 package com.diakiese.pricer.o3utils;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 																
+
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
@@ -14,7 +16,7 @@ import org.joda.time.Days;
 import com.diakiese.pricer.o1bean.Bond;
 import com.diakiese.pricer.o1bean.RateCoordinate;
 
-                                                
+		
 public class BondPricerUtils {
 								
 	final static Logger log = Logger.getLogger(BondPricerUtils.class);
@@ -33,6 +35,15 @@ public class BondPricerUtils {
 		return billingDates;
 	}
 	
+	
+	/**
+	 * converti une java.util.Date en une org.joda.time.DateTime
+	 * */
+	public static DateTime dateTodateTime(Date date){
+
+	  DateTime dateTime = new DateTime(date.getTime());
+	  return dateTime ;
+	}
 	
 	/**
 	 * retourne l'ensemble des dates des coupons futurs associés à une Obligation relativement à la date de pricing

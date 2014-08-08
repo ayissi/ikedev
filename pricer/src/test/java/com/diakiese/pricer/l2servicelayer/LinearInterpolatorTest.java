@@ -14,6 +14,10 @@ import org.junit.Test;
 
 
 
+
+
+import com.diakiese.pricer.l2servicelayer.interpolation.LinearInterpolator;
+import com.diakiese.pricer.l2servicelayer.ratecurve.TestCSVRateCurveBuilderImpl;
 import com.diakiese.pricer.o1bean.RateCoordinate;
 
 public class LinearInterpolatorTest {
@@ -183,6 +187,7 @@ public class LinearInterpolatorTest {
 		//THEN
 		assertThat(result).isEqualTo(null);
 	}
+	
 	
 	/* TESTING linearInterpolation */
 	

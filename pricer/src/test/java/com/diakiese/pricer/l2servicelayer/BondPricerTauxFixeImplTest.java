@@ -11,19 +11,26 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import com.diakiese.pricer.l2servicelayer.interpolation.Iinterpolator;
+import com.diakiese.pricer.l2servicelayer.interpolation.LinearInterpolator;
+import com.diakiese.pricer.l2servicelayer.pricing.BondPricerTauxFixeImpl;
+import com.diakiese.pricer.l2servicelayer.ratecurve.ExcelRateCurveBuilderImpl;
+import com.diakiese.pricer.l2servicelayer.ratecurve.IRateCurveBuilder;
 import com.diakiese.pricer.o1bean.Bond;
 import com.diakiese.pricer.o1bean.RateCoordinate;
 
-																		
+	
 public class BondPricerTauxFixeImplTest {
 
 	static BondPricerTauxFixeImpl pricer ;
 	static DateTime emissionDate;
 	static Bond bond;  
-	static Iinterpolator interpolator;  
+	static Iinterpolator interpolator;
+	static IRateCurveBuilder testRateCurveBuilder = new ExcelRateCurveBuilderImpl();
+
 	@BeforeClass
-	public static void prepareTestEnv(){
-		pricer = new BondPricerTauxFixeImpl(new TestCSVRateCurveBuilderImpl());
+	public static void prepareTestEnv(){				
+		pricer = new BondPricerTauxFixeImpl(testRateCurveBuilder, new LinearInterpolator());													 
 		emissionDate = new DateTime(1993,1,1,0,0,0);
     	Bond.BondBuilder bondBuilder = new Bond().new BondBuilder(); 
 		bond = bondBuilder.withPeriodicity(3)
@@ -44,7 +51,7 @@ public class BondPricerTauxFixeImplTest {
 		
 	}
 
-	
+
 	@Test 
 	public void testPriceSimpleCoupon(){
 		//GIVEN
@@ -62,7 +69,8 @@ public class BondPricerTauxFixeImplTest {
 		assertThat(price2).isNotEqualTo(0.0);
 		assertThat(price1).isNotEqualTo(price2);
 	}
-	
+			
+			
 	@Test 
 	public void testPriceCouponCouru(){
 		//GIVEN
@@ -144,7 +152,10 @@ public class BondPricerTauxFixeImplTest {
 		
 	}
 	
-
+	@Before
+	public void setUp2(){
+		
+	}
 	@After
 	public void tearDown(){
 		
