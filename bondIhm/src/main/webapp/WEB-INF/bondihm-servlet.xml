@@ -17,6 +17,6 @@
         <property name="suffix">
             <value>.jsp</value>
         </property>
-    </bean>
+    </bean>		
   <import resource="classpath:spring-pricer-context.xml"/> 
 </beans>

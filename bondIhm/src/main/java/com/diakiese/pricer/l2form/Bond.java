@@ -1,12 +1,12 @@
-package com.diakiese.pricer.l2bean;
+package com.diakiese.pricer.l2form;
 
 public class Bond {
 
 	private Integer periodicity;
-	private String emissionDate ;
+	private String  emissionDate;
 	private Integer maturity ;
-	private String dateDebut ;
-	private String dateFin ;
+	private String  dateDebut ;
+	private String  dateFin ;
 	private Integer nominal ;
 	
 	public Integer getPeriodicity() {
@@ -44,6 +44,12 @@ public class Bond {
 	}
 	public void setNominal(Integer nominal) {
 		this.nominal = nominal;
+	}
+	
+
+	@Override
+	public String toString(){
+		return "BOND : [PERIODICITY: " + periodicity + "]";
 	}
 	
 	
